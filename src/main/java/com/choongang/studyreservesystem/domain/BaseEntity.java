@@ -10,21 +10,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
-@Getter
-@SuperBuilder
 @MappedSuperclass
+@Getter
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
+	@CreatedDate
+	@Column(updatable = false, name = "created_at")
+	private LocalDateTime createdAt;
+	@LastModifiedDate
+	@Column(updatable = true, name = "updated_at")
+	private LocalDateTime updatedAt;
+	@Column(columnDefinition = "boolean default false")
+	private boolean deleted;
 }

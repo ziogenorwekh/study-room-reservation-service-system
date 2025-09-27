@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class User {
+public class User extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -25,8 +25,7 @@ public class User {
 	private String password;
 	private String name;
 	private String email;
-	@Column(columnDefinition = "boolean default false")
-	private boolean deleted;
+	
 	@Column(nullable = false)
 	private String role;
 	

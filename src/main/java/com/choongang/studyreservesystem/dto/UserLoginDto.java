@@ -39,15 +39,15 @@ public class UserLoginDto implements UserDetails {
 		return user.getUsername();
 	}
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return !user.isDeleted();
-	}
-
-
-	@Override
-	public boolean isEnabled() {
-		return !user.isDeleted();
-	}
+//	@Override
+//	public boolean isAccountNonExpired() {
+//		return !user.isDeleted();
+//	}
+//
+//
+//	@Override
+//	public boolean isEnabled() {
+//		return !user.isDeleted();
+//	}
 
 }
