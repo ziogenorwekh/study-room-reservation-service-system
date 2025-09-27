@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이디 / 비밀번호 찾기</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+        :root {
+            --main-color: #03c75a;
+            --light-gray: #f2f4f7;
+            --border-color: #e5e5e5;
+            --text-color: #202020;
+            --placeholder-color: #8c8c8c;
+            --error-color: #f04452;
+            --blue-link: #0077c2;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--light-gray);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card.find {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .card-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--main-color);
+            box-shadow: 0 0 0 2px rgba(3, 199, 90, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: var(--placeholder-color);
+        }
+
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--main-color);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #02b652;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px !important;
+            font-size: 15px;
+            text-align: center;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .list-group {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .list-group-item {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            font-weight: 500;
+        }
+        .list-group-item:first-child {
+            border-top: 1px solid var(--border-color);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .text-center {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .text-center a {
+            color: var(--blue-link);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card find">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">아이디 찾기</h3>
+                <hr>
+                <form th:action="@{/api/find}" method="post">
+                    <div class="form-group">
+                        <label for="name">이름</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="이름을 입력하세요" required>
+                        <label for="email">이메일</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-block" onclick="findusername(document.getElementById('name'), document.getElementById('email'))">찾기</button>
+                </form>
+                <div id="usernameResult"></div>
+                <hr>
+                <h3 class="card-title text-center mb-4">비밀번호 재설정</h3>
+                <hr>
+                <form th:action="@{/reset-password}" method="post" th:object="${user}">
+                    <div class="form-group">
+                        <label for="userId">아이디</label>
+                        <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력하세요" th:field="*{username}" required>
+                        <label for="emailForReset">이메일</label>
+                        <input type="email" class="form-control" id="emailForReset" name="emailForReset" placeholder="이메일을 입력하세요" th:field="*{email}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">비밀번호 재설정 하기</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="/login">로그인 페이지로 돌아가기</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        async function findusername(name, email) {
+    const response = await fetch('/api/find', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: name.value, email: email.value })
+    });
+
+    const resultDiv = document.getElementById('usernameResult');
+    resultDiv.innerHTML = ''; // 초기화
+
+    if (response.ok) {
+        const data = await response.json();
+        const usernames = data.username;
+
+        if (usernames.length === 0) {
+            resultDiv.innerHTML = `<div class="alert alert-warning mt-3">일치하는 아이디가 없습니다.</div>`;
+            return;
+        }
+
+        const list = document.createElement('ul');
+        list.classList.add('list-group', 'mt-3');
+
+        usernames.forEach(username => {
+            const item = document.createElement('li');
+            item.classList.add('list-group-item');
+            item.textContent = `ID: ${username}`;
+            list.appendChild(item);
+        });
+
+        resultDiv.appendChild(list);
+    } else {
+        resultDiv.innerHTML = `<div class="alert alert-danger mt-3">서버 오류 또는 일치하는 회원 정보가 없습니다.</div>`;
+    }
+}
+
+    </script>
+</body>
+</html>

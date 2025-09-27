@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="/css/basic-style.css">
+</head>
+<body>
+<div class="container">
+    <form class="auth-form" th:action="@{/loginProc}" method="post" name="loginForm">
+        <h2>로그인</h2>
+
+        <div th:if="${param.error}" class="text-danger">
+            아이디 또는 비밀번호가 올바르지 않습니다.
+        </div>
+
+        <div class="input-group">
+            <label for="username">아이디</label>
+            <input type="text" name="username" id="username" placeholder="아이디" required>
+        </div>
+
+        <div class="input-group">
+            <label for="password">비밀번호</label>
+            <input type="password" name="password" id="password" placeholder="비밀번호" required>
+        </div>
+
+        <button type="submit" class="submit-btn">로그인</button>
+        <p class="link-text">
+            아이디 혹은 비밀번호를 잊어버리셨나요? <a th:href="@{/help}">아이디 찾기 / 비밀번호 재설정</a><br>
+            아직 회원이 아니신가요? <a th:href="@{/register}">회원가입</a>
+        </p>
+    </form>
+</div>
+</body>
+</html>

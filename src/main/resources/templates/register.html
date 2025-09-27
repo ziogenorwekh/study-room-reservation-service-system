@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57B+Y72zO3B/02256t5g4i5D8i5t5N5g5" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/basic-style.css">
+</head>
+<body>
+<div class="container">
+    <form class="auth-form" th:object="${user}" th:action="@{/register}" method="post">
+        <h2>회원가입</h2>
+
+        <div class="input-group">
+            <label th:for="username">아이디</label>
+            <input type="text" th:field="*{username}" placeholder="사용하실 아이디를 입력하세요" required>
+            <button class="btn btn-info mt-1" onclick="checkUsername()" type="button">중복 확인</button>
+            <div id="result" class="ml-3 mt-1 d-flex justify-content-center align-items-center"></div>
+        </div>
+
+        <div class="input-group" id="password-group">
+            <label th:for="password">비밀번호</label>
+            <input type="password" th:field="*{password}" placeholder="비밀번호 (8자 이상)" required id="password">
+            <div id="password-check" class="d-flex align-items-center justify-content-center mt-1"></div>
+        </div>
+
+        <div class="input-group" id="password-confirm-group">
+            <label th:for="passwordconfirm">비밀번호 확인</label>
+            <input type="password" placeholder="비밀번호를 한번 더  입력하세요" required id="password-confirm">
+            <div id="password-confirm-check" class="d-flex align-items-center justify-content-center mt-1"></div>
+        </div>
+
+        <div class="input-group">
+            <label th:for="name">이름</label>
+            <input type="text" th:field="*{name}" placeholder="이름을 입력하세요" required>
+        </div>
+
+        <div class="input-group">
+            <label th:for="email">이메일</label>
+            <input type="email" th:field="*{email}" placeholder="이메일 주소" required>
+        </div>
+
+        <button type="submit" class="submit-btn">가입하기</button>
+
+        <p class="link-text">
+            이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
+        </p>
+    </form>
+</div>
+<script>
+    let isUsernameChecked = false;
+    const password = document.getElementById('password');
+    const passwordConfirm = document.getElementById('password-confirm');
+    const passwordInput = document.getElementById('password-group').querySelector('input');
+    const passwordConfirmInput = document.getElementById('password-confirm-group').querySelector('input');
+    const passwordCheckDiv = document.getElementById('password-check');
+    const passwordConfirmCheckDiv = document.getElementById('password-confirm-check');
+    async function checkUsername() {
+        const username = document.querySelector('input[name="username"]').value;
+        const resultDiv = document.getElementById('result');
+        if (!username) {
+            resultDiv.textContent = '아이디를 입력하세요.';
+            resultDiv.style.color = 'red';
+            return;
+        } else if (username.length < 3) {
+            resultDiv.textContent = '아이디는 최소 4자 이상이어야 합니다.';
+            resultDiv.style.color = 'red';
+            return;
+        }
+        try {
+            const response = await fetch(`/api/check-username?username=${username}`);
+            const data = await response.json();
+
+            if (data.available) {
+                resultDiv.textContent = '사용 가능한 아이디입니다.';
+                resultDiv.style.color = 'green';
+                isUsernameChecked = true;
+            } else {
+                resultDiv.textContent = '이미 사용 중인 아이디입니다.';
+                resultDiv.style.color = 'red';
+            }
+        } catch (error) {
+            console.error('Error checking username:', error);
+            resultDiv.textContent = '오류가 발생했습니다. 다시 시도해주세요.';
+            resultDiv.style.color = 'red';
+        }
+        
+    }
+    document.querySelector('.auth-form').addEventListener('submit', e => {
+        if (!isUsernameChecked) {
+            e.preventDefault(); // 폼 제출 막기
+            alert('아이디 중복 확인을 먼저 해주세요.');
+        }
+        if (passwordInput.value.length < 8) {
+            e.preventDefault(); // 폼 제출 막기
+            alert('비밀번호는 최소 8자 이상이어야 합니다.');
+            return;
+        } else if (passwordInput.value !== passwordConfirmInput.value) {
+            e.preventDefault(); // 폼 제출 막기
+            alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+            return;
+        }
+    });
+
+    passwordInput.addEventListener('input', () => {
+        if(passwordInput.value.length < 8) {
+            
+            passwordCheckDiv.textContent = '비밀번호는 최소 8자 이상이어야 합니다.';
+            passwordCheckDiv.style.color = 'red';
+            passwordInput.setCustomValidity('비밀번호는 최소 8자 이상이어야 합니다.');
+            password.classList.add('is-invalid');
+        } else {
+            passwordCheckDiv.textContent = '';
+            passwordInput.setCustomValidity('');
+            password.classList.remove('is-invalid');
+        }
+    });
+    passwordConfirmInput.addEventListener('input', () => {
+        if(passwordInput.value !== passwordConfirmInput.value) {
+            passwordConfirmCheckDiv.textContent = '비밀번호가 일치하지 않습니다.';
+            passwordConfirmCheckDiv.style.color = 'red';
+            passwordConfirmInput.setCustomValidity('비밀번호가 일치하지 않습니다.');
+            passwordConfirm.classList.add('is-invalid');
+        } else {
+            passwordConfirmCheckDiv.textContent = '';
+            passwordConfirmInput.setCustomValidity('');
+            passwordConfirm.classList.remove('is-invalid');
+        }
+    });
+</script>
+</body>
+</html>

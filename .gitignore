@@ -40,6 +40,7 @@ out/
 # Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,intellij
 
 ### Eclipse ###
+application.properties
 .metadata
 bin/
 tmp/

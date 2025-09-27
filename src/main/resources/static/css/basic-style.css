@@ -1,0 +1,121 @@
+@charset "UTF-8";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+    --main-color: #03c75a;
+    --light-gray: #f2f4f7;
+    --border-color: #e5e5e5;
+    --text-color: #202020;
+    --placeholder-color: #8c8c8c;
+    --error-color: #f04452;
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: var(--light-gray);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.auth-form {
+    background-color: #fff;
+    padding: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    min-width: 500px;
+}
+
+.auth-form h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: var(--text-color);
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: none;
+}
+
+.input-group input[type="text"],
+.input-group input[type="password"],
+.input-group input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 10px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 2px rgba(3, 199, 90, 0.2);
+}
+
+.input-group input::placeholder {
+    color: var(--placeholder-color);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--main-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #02b652;
+}
+
+.link-text {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: #777;
+}
+
+.link-text a {
+    color: var(--main-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-text a:hover {
+    text-decoration: underline;
+}
+
+/* 에러 메시지 스타일 */
+.text-danger {
+    color: var(--error-color);
+    font-size: 14px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
