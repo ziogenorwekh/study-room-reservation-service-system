@@ -196,44 +196,6 @@
         </div>
 
     </div>
-    <script>
-        async function findusername(name, email) {
-    const response = await fetch('/api/find', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: name.value, email: email.value })
-    });
-
-    const resultDiv = document.getElementById('usernameResult');
-    resultDiv.innerHTML = ''; // 초기화
-
-    if (response.ok) {
-        const data = await response.json();
-        const usernames = data.username;
-
-        if (usernames.length === 0) {
-            resultDiv.innerHTML = `<div class="alert alert-warning mt-3">일치하는 아이디가 없습니다.</div>`;
-            return;
-        }
-
-        const list = document.createElement('ul');
-        list.classList.add('list-group', 'mt-3');
-
-        usernames.forEach(username => {
-            const item = document.createElement('li');
-            item.classList.add('list-group-item');
-            item.textContent = `ID: ${username}`;
-            list.appendChild(item);
-        });
-
-        resultDiv.appendChild(list);
-    } else {
-        resultDiv.innerHTML = `<div class="alert alert-danger mt-3">서버 오류 또는 일치하는 회원 정보가 없습니다.</div>`;
-    }
-}
-
-    </script>
+    <script src="/script/confirm.js"></script>
 </body>
 </html>
