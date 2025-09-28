@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.choongang.studyreservesystem.dto.UserPasswordChangeDto;
 import com.choongang.studyreservesystem.dto.UserRegisterDto;
+import com.choongang.studyreservesystem.exception.UserDuplicationException;
 import com.choongang.studyreservesystem.service.jpa.UserJpaService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,17 +32,17 @@ public class MainController {
 	public String userRegister(Model model) {
 		UserRegisterDto dto = new UserRegisterDto();
 		model.addAttribute("user", dto);
-		return "register";
+		return "user_join/register";
 	}
 
 	@PostMapping("/register")
-	public String postMethodName(UserRegisterDto dto, Model model) {
+	public String postMethodName(UserRegisterDto dto, Model model) throws UserDuplicationException {
 		userJpaService.register(dto);
-		return "redirect:/login";
+		return "redirect:/user_join/login";
 	}
 	@GetMapping("/login")
 	public String userLogin() {
-		return "login";
+		return "user_join/login";
 	}
 	@GetMapping("/help")
 	public String findIdAndPassword(Model model) {
@@ -54,7 +55,7 @@ public class MainController {
 	public String resetPassword(UserPasswordChangeDto dto, Model model) {
 		if (userJpaService.matchUsernameAndEmail(dto)) {
 			model.addAttribute("user", dto);
-			return "password-change";
+			return "user/password-change";
 		}
 		return "redirect:/help";
 	}

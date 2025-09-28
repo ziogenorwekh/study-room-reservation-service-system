@@ -1,11 +1,15 @@
 package com.choongang.studyreservesystem.exception;
 
-public class NotFoundException2 extends StudyReserveSytemException {
+public class UserDuplicationException extends StudyReserveSytemException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3100L;
+
+	public UserDuplicationException(String string) {
+		
+	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;

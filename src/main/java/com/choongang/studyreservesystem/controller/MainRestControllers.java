@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class RestControllers {
+public class MainRestControllers {
 
 	private final UserJpaService userService;
 

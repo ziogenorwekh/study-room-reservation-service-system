@@ -13,6 +13,7 @@ import com.choongang.studyreservesystem.dto.UserFindUsernameDto;
 import com.choongang.studyreservesystem.dto.UserPasswordChangeDto;
 import com.choongang.studyreservesystem.dto.UserRegisterDto;
 import com.choongang.studyreservesystem.dto.UserResponseDto;
+import com.choongang.studyreservesystem.exception.UserDuplicationException;
 import com.choongang.studyreservesystem.repository.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -46,11 +47,12 @@ public class UserJpaService {
 	public boolean existsByUsername(String username) {
 		return userRepository.existsByUsername(username);
 	}
-
-	public void register(UserRegisterDto dto) {
+	
+	@Transactional
+	public void register(UserRegisterDto dto) throws UserDuplicationException {
 		User user = new User();
 		if (userRepository.existsByUsername(dto.getUsername())) {
-			throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+			throw new UserDuplicationException("이미 존재하는 아이디입니다.");
 		}
 		user = User.builder().username(dto.getUsername()).password(encoder.encode(dto.getPassword())).role("ROLE_USER")
 				.name(dto.getName()).email(dto.getEmail()).build();
@@ -74,7 +76,7 @@ public class UserJpaService {
 	public boolean matchUsernameAndEmail(UserPasswordChangeDto dto) {
 		return userRepository.existsByUsernameAndEmail(dto.getUsername(), dto.getEmail());
 	}
-
+	@Transactional
 	public void passwordChange(UserPasswordChangeDto dto) {
 		User user = userRepository.findByUsername(dto.getUsername())
 				.orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
