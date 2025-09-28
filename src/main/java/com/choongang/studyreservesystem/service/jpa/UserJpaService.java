@@ -47,7 +47,7 @@ public class UserJpaService {
 	public boolean existsByUsername(String username) {
 		return userRepository.existsByUsername(username);
 	}
-	
+
 	@Transactional
 	public void register(UserRegisterDto dto) throws UserDuplicationException {
 		User user = new User();
@@ -76,12 +76,13 @@ public class UserJpaService {
 	public boolean matchUsernameAndEmail(UserPasswordChangeDto dto) {
 		return userRepository.existsByUsernameAndEmail(dto.getUsername(), dto.getEmail());
 	}
+
 	@Transactional
 	public void passwordChange(UserPasswordChangeDto dto) {
 		User user = userRepository.findByUsername(dto.getUsername())
 				.orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
 		User updatedUser = User.builder().id(user.getId()).username(user.getUsername()).email(user.getEmail())
-				.role(user.getRole()).password(encoder.encode(dto.getChangePassword())).build();
+				.name(user.getName()).role(user.getRole()).password(encoder.encode(dto.getChangePassword())).build();
 		userRepository.save(updatedUser);
 	}
 }
