@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" >
+<head>
+  <meta charset="UTF-8">
+  <title>게시글 작성</title>
+  <style>
+    body {
+      font-family: Pretendard, sans-serif;
+      background-color: #f2f4f7;
+      color: #202020;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .main-content {
+      background-color: #fff;
+      padding: 30px;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h2 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #03c75a;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #03c75a;
+      padding-bottom: 10px;
+    }
+    .form-label {
+      font-weight: 600;
+      margin: 12px 0 5px 0;
+      text-align: left;
+    }
+    .form-input, textarea {
+      width: 100%;
+      padding: 9px 8px;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      margin-bottom: 18px;
+      font-size: 15px;
+      background-color: #f9f9fb;
+    }
+    .form-btn {
+      width: 100%;
+      padding: 11px 0;
+      background-color: #03c75a;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .form-btn:hover {
+      background-color: #029d47;
+    }
+    .back-btn {
+      width: 100%;
+      padding: 11px 0;
+      background-color: #e5e5e5;
+      color: #202020;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .back-btn:hover {
+      background-color: #cacaca;
+    }
+  </style>
+</head>
+<body>
+<div class="main-content">
+  <h2>게시글 작성</h2>
+  <form th:action="@{/board/create}" th:object="${createPostDto}" method="post">
+    <div class="form-label">제목</div>
+    <input type="text" th:field="*{title}" class="form-input" placeholder="제목" required />
+
+    <div class="form-label">작성자</div>
+    <input type="text" th:field="*{username}" class="form-input" placeholder="작성자" required />
+
+    <div class="form-label">내용</div>
+    <textarea th:field="*{content}" rows="7" class="form-input" placeholder="내용" required></textarea>
+
+    <button type="submit" class="form-btn">등록하기</button>
+  </form>
+  <button type="button" class="back-btn" onclick="location.href='/board/list'">뒤로 가기</button>
+</div>
+</body>
+</html>
