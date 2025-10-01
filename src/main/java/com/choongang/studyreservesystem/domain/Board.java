@@ -29,8 +29,13 @@ public class Board extends BaseEntity {
 	@Column(nullable = false, length = 1000)
 	private String content;
 
-	private LocalDateTime createdAt = LocalDateTime.now();
-
 	@Builder.Default
 	private Long likeCount = 0L;
+
+	@Builder.Default
+	private Long viewCount = 0L;
+
+	public void increaseViewCount() {
+		this.viewCount++;
+	}
 }
