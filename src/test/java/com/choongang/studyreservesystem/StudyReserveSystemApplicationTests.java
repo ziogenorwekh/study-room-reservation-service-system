@@ -1,6 +1,8 @@
 package com.choongang.studyreservesystem;
 
 import com.choongang.studyreservesystem.domain.Board;
+import com.choongang.studyreservesystem.exception.BoardNotFoundException;
+import com.choongang.studyreservesystem.exception.UnauthorizedDeleteException;
 import com.choongang.studyreservesystem.repository.jpa.BoardRepository;
 import com.choongang.studyreservesystem.service.jpa.BoardService;
 import org.junit.jupiter.api.Assertions;
@@ -15,14 +17,63 @@ class StudyReserveSystemApplicationTests {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private BoardRepository boardRepository;
+
     @Test
     @DisplayName("게시글 삭제 - 존재하지 않는 글")
-    void testPostDelete1() {
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            boardService.delete(1L);
+    void testPostDelete1_NotFound() {
+        Assertions.assertThrows(BoardNotFoundException.class, () -> {
+            boardService.delete(1L, "testUser", "ROLE_USER");
         });
     }
 
+    @Test
+    @DisplayName("게시글 삭제 - 권한 없음")
+    void testPostDelete2_Unauthorized() {
+        Board board = Board.builder()
+                .username("testUser")
+                .title("testTitle")
+                .content("testContent")
+                .build();
+        Board savedBoard = boardRepository.save(board);
 
+        Assertions.assertThrows(UnauthorizedDeleteException.class, () -> {
+            boardService.delete(savedBoard.getBoardId(), "otherUser", "ROLE_USER");
+        });
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - 게시글 작성자 삭제 성공")
+    void testPostDelete3_UserSuccess() {
+        Board board = Board.builder()
+                .username("testUser")
+                .title("testTitle")
+                .content("testContent")
+                .build();
+        Board savedBoard = boardRepository.save(board);
+
+        Assertions.assertDoesNotThrow(() -> {
+            boardService.delete(savedBoard.getBoardId(), "testUser", "ROLE_USER");
+        });
+
+        Assertions.assertFalse(boardRepository.existsById(savedBoard.getBoardId()));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - 관리자 삭제 성공")
+    void testPostDelete4_AdminSuccess() {
+        Board board = Board.builder()
+                .username("testUser")
+                .title("testTitle")
+                .content("testContent")
+                .build();
+        Board savedBoard = boardRepository.save(board);
+
+        Assertions.assertDoesNotThrow(() -> {
+            boardService.delete(savedBoard.getBoardId(), "admin", "ROLE_ADMIN");
+        });
+
+        Assertions.assertFalse(boardRepository.existsById(savedBoard.getBoardId()));
+    }
 }

@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +33,15 @@ public class BoardController {
     }
 
     // 게시글 삭제
-    @DeleteMapping("/board/post/{postId}")
-    public String deletePost(@PathVariable Long postId) {
-        boardService.delete(postId);
+    @DeleteMapping("/board/post/{boardId}")
+    public String deleteBoard(@PathVariable Long boardId,
+                              @AuthenticationPrincipal UserDetails userDetails) {
+        String currentUsername = userDetails.getUsername();
+        String userRole = userDetails.getAuthorities().stream().findFirst()
+                                     .map(GrantedAuthority::getAuthority)
+                                     .orElse("ROLE_USER");
+
+        boardService.delete(boardId, currentUsername, userRole);
         return "redirect:/board/list";
     }
 }
