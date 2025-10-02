@@ -34,20 +34,19 @@
                         <button class="btn btn-outline-primary me-2" onclick="likePost()">
                             <i class="bi bi-heart"></i> 좋아요
                         </button>
-
-                        <!--게시글 삭제 버튼 생성-->
-                        <form th:action="@{/board/post/{id}(id=${board.boardId})}"
-                              th:method="delete"
-                              th:if="${#authentication.name == board.username} or ${#authorization.expression('hasRole(''ADMIN'')')}"
-                              onsubmit="return confirm('삭제하시겠습니까?');">
-
-                            <input type="hidden"
-                                   th:name="${_csrf.parameterName}"
-                                   th:value="${_csrf.token}">
-                            <button class="btn btn-danger" onclick="deletePost(board.boardId)"
-                                    th:if="${post.username == session.username}">삭제</button>
-                        </form>
                     </div>
+                    <!--게시글 삭제 버튼 생성-->
+                    <form th:action="@{/board/post/{id}(id=${board.boardId})}"
+                          th:method="delete"
+                          th:if="${#authentication.name == board.username} or ${#authorization.expression('hasRole(''ADMIN'')')}"
+                          onsubmit="return confirm('삭제하시겠습니까?');">
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+                        <button class="btn btn-danger" onclick="deletePost(board.boardId)"
+                                th:if="${post.username == session.username}">삭제</button>
+                    </form>
                 </div>
             </div>
         </div>
