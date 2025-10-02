@@ -24,7 +24,7 @@ class StudyReserveSystemApplicationTests {
     @DisplayName("게시글 삭제 - 존재하지 않는 글")
     void testPostDelete1_NotFound() {
         Assertions.assertThrows(BoardNotFoundException.class, () -> {
-            boardService.delete(1L, "testUser", "ROLE_USER");
+            boardService.deletePost(1L, "testUser", "ROLE_USER");
         });
     }
 
@@ -39,7 +39,7 @@ class StudyReserveSystemApplicationTests {
         Board savedBoard = boardRepository.save(board);
 
         Assertions.assertThrows(UnauthorizedDeleteException.class, () -> {
-            boardService.delete(savedBoard.getBoardId(), "otherUser", "ROLE_USER");
+            boardService.deletePost(savedBoard.getBoardId(), "otherUser", "ROLE_USER");
         });
     }
 
@@ -54,7 +54,7 @@ class StudyReserveSystemApplicationTests {
         Board savedBoard = boardRepository.save(board);
 
         Assertions.assertDoesNotThrow(() -> {
-            boardService.delete(savedBoard.getBoardId(), "testUser", "ROLE_USER");
+            boardService.deletePost(savedBoard.getBoardId(), "testUser", "ROLE_USER");
         });
 
         Assertions.assertFalse(boardRepository.existsById(savedBoard.getBoardId()));
@@ -71,7 +71,7 @@ class StudyReserveSystemApplicationTests {
         Board savedBoard = boardRepository.save(board);
 
         Assertions.assertDoesNotThrow(() -> {
-            boardService.delete(savedBoard.getBoardId(), "admin", "ROLE_ADMIN");
+            boardService.deletePost(savedBoard.getBoardId(), "admin", "ROLE_ADMIN");
         });
 
         Assertions.assertFalse(boardRepository.existsById(savedBoard.getBoardId()));
