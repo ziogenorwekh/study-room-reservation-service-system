@@ -1,5 +1,6 @@
 package com.choongang.studyreservesystem.repository.jpa;
 
+import com.choongang.studyreservesystem.dto.CreatePostDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.choongang.studyreservesystem.domain.Board;
@@ -11,4 +12,5 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByUsername(String username);
     List<Board> findByTitleContaining(String keyword);
+
 }
