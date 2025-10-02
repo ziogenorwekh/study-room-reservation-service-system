@@ -25,6 +25,7 @@ public class BoardService {
 
     // 엔티티 클래스 이름이 Board인데, createPost는 네이밍이 조금..? 헷갈리는 부분이 있는 것 같습니다.
     // 이 친구도 Transcational이 있으면 좋겠네요.
+    @Transactional
     public Long createPost(CreatePostDto createPostDto) {
         Board board = Board.builder()
                 .title(createPostDto.getTitle())

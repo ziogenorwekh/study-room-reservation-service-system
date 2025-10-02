@@ -57,7 +57,7 @@ public class BoardController {
                                      .map(GrantedAuthority::getAuthority)
                                      .orElse("ROLE_USER");
 
-        boardService.delete(boardId, currentUsername, userRole);
+        boardService.deletePost(boardId, currentUsername, userRole);
         return "redirect:/board/list";
     }
 }
