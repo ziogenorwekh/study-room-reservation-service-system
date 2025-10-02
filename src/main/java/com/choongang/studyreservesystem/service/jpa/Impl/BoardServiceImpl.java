@@ -21,6 +21,14 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BoardServiceImpl implements BoardService {
 
+    // 마지막으로 BoardRepository 흠.. 이것도 DIP 원칙에 위배되요.
+    // BoardRepository는 인터페이스 아니야? 왜 DIP에 위배 돼? 라고 생각하실 수 있는데,
+    // BoardRepository에 달린 JPA 인터페이스가 기억나시요?
+    // JPA에 종속된 나름의 구현체라고 생각하시면 좋을 것 같습니다.
+    // 기억이 나실진 모르겠지만, 전 MyBatis를 쓴다고 했어요. 그럼 전 Mapper라는 클래스를 사용해야 해요.
+    // 지금의 상태로는 MyBatis도 적용하려면, 또 다른 인터페이스를 BoardService가 가져야 합니다.
+    // 예시로, example이라는, 패키지에 제가 예시를 만들어드렸습니다. 참고해주시면 감사합니다.
+    // 안고쳐도 됩니다. 이건 저희의 설계원칙에 대한 위배사항을 말씀드렸습니다.
     private final BoardRepository boardRepository;
 
     // 말씀하신 내용에 대해서 의견 감사합니다. 말씀하신 의견은 타당하다고 생각합니다.
