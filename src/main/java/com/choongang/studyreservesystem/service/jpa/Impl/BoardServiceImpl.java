@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// 최상위에서 Transactional 걸 수 있습니다.
+// 근데 최상위에서 읽기만 하라고 걸면, 다른 수정해야 하는 create, delete 작업이 제한됩니다.
+// 왜냐, 이 클래스의 모든 메서드는 읽기만 가능하다고 설정했기 때문에요.
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -20,6 +23,13 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
 
+    // 말씀하신 내용에 대해서 의견 감사합니다. 말씀하신 의견은 타당하다고 생각합니다.
+    // 다만 제가 말씀은 드린 것은, 그러면 PostService를 만드셨어야 된다고 생각합니다.
+    // 누구나 다 게시판(Board)에 생성하는 게시글(Post)을 만든다 라는 의견은 변함이 없으니까요.
+    // 다만, 네이밍 컨벤션이 다르다는 것 자체에 주목하고 싶습니다. BoardService라는 것은 Board를 관리하는 주체에요.
+    // (게시글 생성과 같은 CRUD가 아닌 게시판(Board) 자체에 대한 변경을 의미하는 서비스가 되어버립니다.)
+    // Post를 만든 다는 것은 네이밍 자체에있어서 단일책임 원칙에 위반되는 사항이에요.
+    // '나'만 개발하는 것이 아니라서 말씀드린 것입니다. 의견 감사합니다. 타당한 의견이기에 제가 생각하는? 것을 말씀드렸습니다.
     // HHE: createBoard는 말이 안됩니다. 이 메서드는 보드를 생성하는 것이 아니라 개별 포스트를 생성하는 것이기 때문입니다.
     // 메서드명의 변경을 원하는 것이 아니라, 엔티티명이 변경되길 원하시면 다시 말씀해주시길 바랍니다.
     @Transactional
