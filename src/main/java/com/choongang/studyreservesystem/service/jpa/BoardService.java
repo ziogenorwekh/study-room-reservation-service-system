@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 // 추상 클래스에 의존해야 해요.
 // DIP 원칙에 위배됩니다. BoardService라는 인터페이스를 구축해서 작성해주세요.
 // 뭐 저희 개발에는 당장은 필요 없을지 몰라도, 나중에 직장가면 필요할 수 있으니까요.
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
 
@@ -28,7 +30,6 @@ public class BoardService {
                 .title(createPostDto.getTitle())
                 .content(createPostDto.getContent())
                 .username(createPostDto.getUsername())
-                .createdAt(LocalDateTime.now())
                 .likeCount(0L)
                 .build();
         Board savedBoard = boardRepository.save(board);

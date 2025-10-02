@@ -1,8 +1,11 @@
 package com.choongang.studyreservesystem.config;
 
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,14 +13,17 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)    // 메서드 레벨 보안 활성화
+@RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
 		httpSecurity
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/login","/register","/help").anonymous()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
-						.requestMatchers("/user/**").hasAnyRole("ADMIN","USER")
+						.requestMatchers("/user/**", "/board/**").hasAnyRole("ADMIN","USER")
 						.anyRequest().permitAll())
 				.formLogin(form -> form
 						.loginPage("/login")
@@ -39,7 +45,7 @@ public class SecurityConfig {
 	}
     
     @Bean
-    BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
     	return new BCryptPasswordEncoder();
     }
 }
