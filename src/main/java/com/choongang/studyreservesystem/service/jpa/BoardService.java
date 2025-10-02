@@ -23,8 +23,10 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    // 엔티티 클래스 이름이 Board인데, createPost는 네이밍이 조금..? 헷갈리는 부분이 있는 것 같습니다.
-    // 이 친구도 Transcational이 있으면 좋겠네요.
+
+    // HHE: createBoard는 말이 안됩니다. 이 메서드는 보드를 생성하는 것이 아니라 개별 포스트를 생성하는 것이기 때문입니다.
+    // 메서드명의 변경을 원하는 것이 아니라, 엔티티명이 변경되길 원하시면 다시 말씀해주시길 바랍니다.
+    @Transactional
     public Long createPost(CreatePostDto createPostDto) {
         Board board = Board.builder()
                 .title(createPostDto.getTitle())
