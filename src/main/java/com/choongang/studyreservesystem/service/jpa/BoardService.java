@@ -36,13 +36,15 @@ public class BoardService {
         return savedBoard.getBoardId();
     }
 
+
+
     // 게시글이 없다는 것은 BoardNotFoundException 이라는 네이밍을 가진 클래스를 사용하면 좋을 것 같아요.
     // 지금 쓰신 예외는 인수 입력 처리에 발생하는 에러입니다.
     // 저 예외처리를 받아서 핸들링 하는 다른 클래스와 혼동되는 문제가 생겨요 -> 예) 해당 예외처리하는 메서드는 400으로 보통 처리하는데,
     // 지금은 찾을 수 없는 Http 상태코드 404를 뱉어야 하거든요. 저희는 api 형태로도 쓰이고 있으니 예외처리를 바꿔주셨으면 합니다.
     // JSA : 수정 완료했습니다.
     @Transactional
-    public void delete(Long boardId, String currentUsername, String userRole) {
+    public void deletePost(Long boardId, String currentUsername, String userRole) {
         // 게시글 존재 확인
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new BoardNotFoundException("해당 게시글이 없습니다. id = " + boardId));
 
@@ -66,5 +68,19 @@ public class BoardService {
         }
         // 게시글 작성자 본인만 삭제 가능
         return board.getUsername().equals(currentUsername);
+    }
+
+    // 게시글 목록 조회
+    public List<Board> getAllPosts() {
+        return boardRepository.findAll();
+    }
+
+    // 게시글 상세 조회 (자기 게시글이거나 관리자일 경우 조회수 증가 없음 구현하자)
+    @Transactional
+    public Board getPostByPostId(Long id) {
+        Board post = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+        post.increaseViewCount();
+        return boardRepository.save(post);
     }
 }
