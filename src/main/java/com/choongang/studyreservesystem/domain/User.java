@@ -1,15 +1,13 @@
 package com.choongang.studyreservesystem.domain;
 
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -30,5 +28,9 @@ public class User extends BaseEntity {
 	
 	@Column(nullable = false)
 	private String role;
-	
+
+    // 게시글은 그대로 두고 작성자만 NULL 처리(탈퇴 사용자)
+    @OneToMany(mappedBy = "author", orphanRemoval = false)
+    private List<Board> boards = new ArrayList<>();
+
 }

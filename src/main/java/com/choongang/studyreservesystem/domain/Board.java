@@ -38,4 +38,13 @@ public class Board extends BaseEntity {
 	public void increaseViewCount() {
 		this.viewCount++;
 	}
+
+    @Version
+    private Long version;   // 동시 수정 방지
+
+    // 작성자 null 허용(탈퇴 사용자)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "author_id", nullable = true) // nullable 허용
+    private User author;
+
 }
