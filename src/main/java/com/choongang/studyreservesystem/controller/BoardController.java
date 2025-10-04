@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -117,7 +118,23 @@ public class BoardController {
         return "success";
     }
 
-    // 게시글 수정
+    // 게시글 수정 Form (Get)
+    @GetMapping("/board/post/{id}/edit")
+    public String editForm(@PathVariable Long id,
+                           Model model,
+                           @AuthenticationPrincipal CustomUserDetails me) {
+        Board board = postService.getPostByPostId(id); // ✅ 여기서도 인스턴스 호출
+
+        boolean owner = board.getUsername().equals(me.getUsername());
+        boolean admin = me.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!(owner || admin)) throw new AccessDeniedException("권한 없음");
+
+        model.addAttribute("form", UpdatePostDto.from(board));
+        return "board/edit";
+    }
+
+    // 게시글 수정 저장(Post)
     @PostMapping("/board/post/{id}/edit")
     public String editBoard(@PathVariable Long id,
                             @Valid @ModelAttribute("form") UpdatePostDto updatePostDto,
