@@ -5,7 +5,7 @@ import com.choongang.studyreservesystem.domain.User;
 import com.choongang.studyreservesystem.dto.CreatePostDto;
 import com.choongang.studyreservesystem.dto.UpdatePostDto;
 import com.choongang.studyreservesystem.security.CustomUserDetails;
-import com.choongang.studyreservesystem.service.jpa.BoardService;
+import com.choongang.studyreservesystem.service.jpa.PostService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class BoardController {
 
-    private final BoardService boardService;
+    private final PostService postService;
 
     @GetMapping("/board/create")
     public String showCreateForm(Model model) {
@@ -41,7 +41,7 @@ public class BoardController {
     // 게시글 등록 POST
     @PostMapping("/board/create")
     public String createPost(@ModelAttribute CreatePostDto createPostDto) {
-        boardService.createPost(createPostDto);
+        postService.createPost(createPostDto);
         return "redirect:/board/list";
     }
 
@@ -62,9 +62,9 @@ public class BoardController {
                 .keyword(keyword)
                 .searchType(searchType)
                 .build();
-            boardPage = boardService.searchPosts(searchDto, pageable);
+            boardPage = postService.searchPosts(searchDto, pageable);
         } else {
-            boardPage = boardService.getAllPosts(pageable);
+            boardPage = postService.getAllPosts(pageable);
         }
 
         model.addAttribute("posts", boardPage.getContent());
@@ -77,7 +77,7 @@ public class BoardController {
     // 게시글 상세 조회
     @GetMapping("/board/post/{postId}")
     public String postDetail(@PathVariable Long postId, Model model) {
-        Board post = boardService.getPostByPostId(postId);
+        Board post = postService.getPostByPostId(postId);
         model.addAttribute("post", post);
         return "board/postDetail";
     }
@@ -93,7 +93,7 @@ public class BoardController {
                                      .map(GrantedAuthority::getAuthority)
                                      .orElse("ROLE_USER");
 
-        boardService.deletePost(boardId, currentUsername, userRole);
+        postService.deletePost(boardId, currentUsername, userRole);
         return "redirect:/board/list";
     }
 
@@ -104,7 +104,7 @@ public class BoardController {
         if (user == null) {
             return "login_required";
         }
-        boardService.toggleLike(boardId, user.getId());
+        postService.toggleLike(boardId, user.getId());
         return "success";
     }
 
@@ -130,7 +130,7 @@ public class BoardController {
 
         try {
             String actorUsername = user.getUsername();
-            boardService.updatePost(id, user.getId(), updatePostDto);
+            postService.updatePost(id, user.getId(), updatePostDto);
 
         } catch (SecurityException se) {
             ra.addFlashAttribute("error", "작성자 본인만 수정할 수 있습니다.");

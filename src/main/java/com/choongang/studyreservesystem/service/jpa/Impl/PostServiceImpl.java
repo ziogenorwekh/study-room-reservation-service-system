@@ -11,7 +11,7 @@ import com.choongang.studyreservesystem.repository.jpa.BoardLikeRepository;
 import com.choongang.studyreservesystem.repository.jpa.UserRepository;
 import com.choongang.studyreservesystem.domain.BoardLike;
 import com.choongang.studyreservesystem.domain.User;
-import com.choongang.studyreservesystem.service.jpa.BoardService;
+import com.choongang.studyreservesystem.service.jpa.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -23,17 +23,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.choongang.studyreservesystem.dto.SearchPostDto;
 
+
+// 최상위에서 Transactional 걸 수 있습니다.
+// 근데 최상위에서 읽기만 하라고 걸면, 다른 수정해야 하는 create, delete 작업이 제한됩니다.
+// 왜냐, 이 클래스의 모든 메서드는 읽기만 가능하다고 설정했기 때문에요.
+// JSA : 최상위 Transactional은 클래스 레벨의 설정 오버라이드하기 때문에 하위 메서드들의 @Transactional은 모두 readOnly=false가 되는게 아닌가요?
+// 수업시간에 배운 적이 있어 혹시 몰라 말씀드려봅니다
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class BoardServiceImpl implements BoardService {
+public class PostServiceImpl implements PostService {
 
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final UserRepository userRepository;
 
-    // HHE: createBoard는 말이 안됩니다. 이 메서드는 보드를 생성하는 것이 아니라 개별 포스트를 생성하는 것이기 때문입니다.
-    // 메서드명의 변경을 원하는 것이 아니라, 엔티티명이 변경되길 원하시면 다시 말씀해주시길 바랍니다.
     @Transactional
     @Override
     public void createPost(CreatePostDto createPostDto) {
