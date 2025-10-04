@@ -13,5 +13,4 @@ public interface BoardService {
     List<Board> getAllPosts();
     Board getPostByPostId(Long id);
     boolean isAuthor(Long boardId, Long userId);
-
 }
