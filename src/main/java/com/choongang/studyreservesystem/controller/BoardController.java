@@ -85,26 +85,26 @@ public class BoardController {
 
 
     // 게시글 삭제
-    @DeleteMapping("/board/post/{boardId}")
-    public String deleteBoard(@PathVariable Long boardId,
+    @DeleteMapping("/board/post/{postId}")
+    public String deleteBoard(@PathVariable Long postId,
                               @AuthenticationPrincipal UserDetails userDetails) {
         String currentUsername = userDetails.getUsername();
         String userRole = userDetails.getAuthorities().stream().findFirst()
                                      .map(GrantedAuthority::getAuthority)
                                      .orElse("ROLE_USER");
 
-        postService.deletePost(boardId, currentUsername, userRole);
+        postService.deletePost(postId, currentUsername, userRole);
         return "redirect:/board/list";
     }
 
     // 게시글 좋아요 토글
-    @PostMapping("/board/post/{boardId}/like")
+    @PostMapping("/board/post/{postId}/like")
     @ResponseBody
-    public String toggleLike(@PathVariable Long boardId, @AuthenticationPrincipal CustomUserDetails user) {
+    public String toggleLike(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetails user) {
         if (user == null) {
             return "login_required";
         }
-        postService.toggleLike(boardId, user.getId());
+        postService.toggleLike(postId, user.getId());
         return "success";
     }
 
@@ -118,7 +118,7 @@ public class BoardController {
                             Model model) {
         // 폼 검증 실패 → 수정 폼으로
         if (br.hasErrors()) {
-            model.addAttribute("boardId", id);
+            model.addAttribute("postId", id);
             return "board/updateBoardForm";
         }
 

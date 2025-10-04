@@ -48,9 +48,9 @@
             </thead>
             <tbody>
                 <tr th:each="post : ${posts}">
-                    <td class="post-id" th:text="${post.boardId}"></td>
+                    <td class="post-id" th:text="${post.postId}"></td>
                     <td>
-                        <a th:href="@{/board/post/{id}(id=${post.boardId})}"
+                        <a th:href="@{/board/post/{id}(id=${post.postId})}"
                            th:text="${post.title}" class="post-title"></a>
                     </td>
                     <td class="post-author" th:text="${post.username}"></td>

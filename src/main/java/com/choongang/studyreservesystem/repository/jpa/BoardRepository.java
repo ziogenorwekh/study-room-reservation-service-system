@@ -30,7 +30,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     int detachAuthorByUserId(@Param("userId") Long userId);
 
     // 권한 체크 최적화용 (엔티티 전체 로딩 없이 authorId만 확인)
-    @Query("SELECT b.author.id FROM Board b WHERE b.id = :boardId")
-    Optional<Long> findAuthorIdByBoardId(@Param("boardId") Long boardId);
+    @Query("SELECT b.author.id FROM Board b WHERE b.id = :postId")
+    Optional<Long> findAuthorIdByPostId(@Param("postId") Long postId);
 
 }

@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface PostService {
     void createPost(CreatePostDto createPostDto);
-    void updatePost(Long boardId, Long actorUserId, UpdatePostDto updatePostDto);
-    void deletePost(Long boardId, String currentUsername, String userRole);
-    void toggleLike(Long boardId, Long userId);
+    void updatePost(Long postId, Long actorUserId, UpdatePostDto updatePostDto);
+    void deletePost(Long postId, String currentUsername, String userRole);
+    void toggleLike(Long postId, Long userId);
     Board getPostByPostId(Long id);
-    boolean isAuthor(Long boardId, Long userId);
+    boolean isAuthor(Long postId, Long userId);
     Page<Board> getAllPosts(Pageable pageable);
     Page<Board> searchPosts(SearchPostDto searchPostDto, Pageable pageable);
 

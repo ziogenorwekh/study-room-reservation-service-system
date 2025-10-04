@@ -38,7 +38,7 @@
                         </button>
                     </div>
                     <!--게시글 삭제 버튼 생성-->
-                        <form th:action="@{/board/post/{id}(id=${post.boardId})}"
+                        <form th:action="@{/board/post/{id}(id=${post.postId})}"
                               th:method="delete"
                               th:if="${#authentication.name == post.username}"
                               onsubmit="return confirm('삭제하시겠습니까?');" class="d-inline">
@@ -49,7 +49,7 @@
                             <button class="btn btn-danger" type="submit">삭제</button>
                         </form>
                         <!-- 작성자 본인에게만 노출 -->
-                        <a th:href="@{/board/post/{id}/edit(id=${post.boardId})}"
+                        <a th:href="@{/board/post/{id}/edit(id=${post.postId})}"
                            class="btn btn-primary ms-2"
                            th:if="${#authentication.name == post.username}">
                             수정
@@ -64,11 +64,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:inline="javascript">
     function toggleLike() {
-        const boardId = [[${post.boardId}]];
+        const postId = [[${post.postId}]];
         const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
         
-        fetch(`/board/post/${boardId}/like`, {
+        fetch(`/board/post/${postId}/like`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

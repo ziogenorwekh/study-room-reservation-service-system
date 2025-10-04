@@ -18,7 +18,7 @@ import java.util.List;
 public class Board extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long boardId;
+	private Long postId;
 
 	@Column( unique = true, nullable = false)
 	private String username;

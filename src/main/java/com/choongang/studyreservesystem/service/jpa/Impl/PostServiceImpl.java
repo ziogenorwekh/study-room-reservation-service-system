@@ -59,9 +59,9 @@ public class PostServiceImpl implements PostService {
     // JSA : 수정 완료했습니다.
     @Transactional
     @Override
-    public void deletePost(Long boardId, String currentUsername, String userRole) {
+    public void deletePost(Long postId, String currentUsername, String userRole) {
         // 게시글 존재 확인
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new BoardNotFoundException("해당 게시글이 없습니다. id = " + boardId));
+        Board board = boardRepository.findById(postId).orElseThrow(() -> new BoardNotFoundException("해당 게시글이 없습니다. id = " + postId));
 
         // 권한 확인
         if (!canDelete(board, currentUsername, userRole)) {
@@ -104,9 +104,9 @@ public class PostServiceImpl implements PostService {
     // 게시글 수정 관련 함수 추가 2025.10.04 JHE
     @Override
     @Transactional(readOnly = true)
-    public boolean isAuthor(Long boardId, Long userId) {
+    public boolean isAuthor(Long postId, Long userId) {
         // author가 null일 수 있으므로 authorId만 가볍게 조회
-        Optional<Long> authorIdOpt = boardRepository.findAuthorIdByBoardId(boardId);
+        Optional<Long> authorIdOpt = boardRepository.findAuthorIdByPostId(postId);
         if (authorIdOpt.isEmpty()) return false; // 글 없음
         Long authorId = authorIdOpt.get();
         if (authorId == null) return false;      // 탈퇴/분리된 글 → 누구도 수정 불가
@@ -115,8 +115,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void updatePost(Long boardId, Long actorUserId, UpdatePostDto updatePostDto) {
-        Board board = getPostByPostId(boardId);
+    public void updatePost(Long postId, Long actorUserId, UpdatePostDto updatePostDto) {
+        Board board = getPostByPostId(postId);
 
         // 1) 작성자 존재 검증 (author == null 이면 수정 금지)
         if (board.getAuthor() == null) {
@@ -133,14 +133,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void toggleLike(Long boardId, Long userId) {
-        Optional<BoardLike> existingLike = boardLikeRepository.findByBoardBoardIdAndUserId(boardId, userId);
-        Board board = boardRepository.findById(boardId)
+    public void toggleLike(Long postId, Long userId) {
+        Optional<BoardLike> existingLike = boardLikeRepository.findByBoardPostIdAndUserId(postId, userId);
+        Board board = boardRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
         
         if (existingLike.isPresent()) {
             // 좋아요 취소
-            boardLikeRepository.deleteByBoardBoardIdAndUserId(boardId, userId);
+            boardLikeRepository.findByBoardPostIdAndUserId(postId, userId);
         } else {
             // 좋아요 추가
             User user = userRepository.findById(userId)
@@ -154,7 +154,7 @@ public class PostServiceImpl implements PostService {
         }
         
         // 좋아요 수 업데이트
-        long likeCount = boardLikeRepository.countByBoardBoardId(boardId);
+        long likeCount = boardLikeRepository.countByBoardPostId(postId);
         board.updateLikeCount(likeCount);
         boardRepository.save(board);
     }
