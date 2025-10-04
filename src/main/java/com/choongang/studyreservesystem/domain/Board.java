@@ -20,7 +20,7 @@ public class Board extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long postId;
 
-	@Column( unique = true, nullable = false)
+	@Column(nullable = false)
 	private String username;
 
 	@Column(nullable = false)
