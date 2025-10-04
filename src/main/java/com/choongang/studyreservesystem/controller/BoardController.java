@@ -12,6 +12,10 @@ import lombok.AllArgsConstructor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import com.choongang.studyreservesystem.dto.SearchPostDto;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -42,8 +47,30 @@ public class BoardController {
 
     // 게시글 목록 조회
     @GetMapping("/board/list")
-    public String boardList(Model model) {
-        model.addAttribute("posts", boardService.getAllPosts());
+    public String boardList(
+            @RequestParam(defaultValue = "0", name="page") int page,
+            @RequestParam(required = false, name="keyword") String keyword,
+            @RequestParam(defaultValue = "all", name="searchType") String searchType,
+            Model model) {
+
+        int size = 10;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        
+        Page<Board> boardPage;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            SearchPostDto searchDto = SearchPostDto.builder()
+                .keyword(keyword)
+                .searchType(searchType)
+                .build();
+            boardPage = boardService.searchPosts(searchDto, pageable);
+        } else {
+            boardPage = boardService.getAllPosts(pageable);
+        }
+
+        model.addAttribute("posts", boardPage.getContent());
+        model.addAttribute("pageInfo", boardPage);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchType", searchType);
         return "board/boardList";
     }
 
@@ -54,6 +81,8 @@ public class BoardController {
         model.addAttribute("post", post);
         return "board/postDetail";
     }
+
+
 
     // 게시글 삭제
     @DeleteMapping("/board/post/{boardId}")
@@ -66,6 +95,17 @@ public class BoardController {
 
         boardService.deletePost(boardId, currentUsername, userRole);
         return "redirect:/board/list";
+    }
+
+    // 게시글 좋아요 토글
+    @PostMapping("/board/post/{boardId}/like")
+    @ResponseBody
+    public String toggleLike(@PathVariable Long boardId, @AuthenticationPrincipal CustomUserDetails user) {
+        if (user == null) {
+            return "login_required";
+        }
+        boardService.toggleLike(boardId, user.getId());
+        return "success";
     }
 
     // 게시글 수정

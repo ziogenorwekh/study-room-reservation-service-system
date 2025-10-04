@@ -7,6 +7,10 @@ import com.choongang.studyreservesystem.exception.BoardDeletionException;
 import com.choongang.studyreservesystem.exception.BoardNotFoundException;
 import com.choongang.studyreservesystem.exception.UnauthorizedDeleteException;
 import com.choongang.studyreservesystem.repository.jpa.BoardRepository;
+import com.choongang.studyreservesystem.repository.jpa.BoardLikeRepository;
+import com.choongang.studyreservesystem.repository.jpa.UserRepository;
+import com.choongang.studyreservesystem.domain.BoardLike;
+import com.choongang.studyreservesystem.domain.User;
 import com.choongang.studyreservesystem.service.jpa.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -15,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.choongang.studyreservesystem.dto.SearchPostDto;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +29,8 @@ import java.util.Optional;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardLikeRepository boardLikeRepository;
+    private final UserRepository userRepository;
 
     // HHE: createBoard는 말이 안됩니다. 이 메서드는 보드를 생성하는 것이 아니라 개별 포스트를 생성하는 것이기 때문입니다.
     // 메서드명의 변경을 원하는 것이 아니라, 엔티티명이 변경되길 원하시면 다시 말씀해주시길 바랍니다.
@@ -74,8 +83,8 @@ public class BoardServiceImpl implements BoardService {
 
     // 게시글 목록 조회
     @Override
-    public List<Board> getAllPosts() {
-        return boardRepository.findAll();
+    public Page<Board> getAllPosts(Pageable pageable) {
+        return boardRepository.findAll(pageable);
     }
 
     // 게시글 상세 조회 (자기 게시글이거나 관리자일 경우 조회수 증가 없음 구현하자)
@@ -116,7 +125,49 @@ public class BoardServiceImpl implements BoardService {
         }
 
         board.updateBoard(updatePostDto.getTitle(), updatePostDto.getContent());
-
     }
 
+    @Override
+    @Transactional
+    public void toggleLike(Long boardId, Long userId) {
+        Optional<BoardLike> existingLike = boardLikeRepository.findByBoardBoardIdAndUserId(boardId, userId);
+        Board board = boardRepository.findById(boardId)
+            .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+        
+        if (existingLike.isPresent()) {
+            // 좋아요 취소
+            boardLikeRepository.deleteByBoardBoardIdAndUserId(boardId, userId);
+        } else {
+            // 좋아요 추가
+            User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+            
+            BoardLike boardLike = BoardLike.builder()
+                .board(board)
+                .user(user)
+                .build();
+            boardLikeRepository.save(boardLike);
+        }
+        
+        // 좋아요 수 업데이트
+        long likeCount = boardLikeRepository.countByBoardBoardId(boardId);
+        board.updateLikeCount(likeCount);
+        boardRepository.save(board);
+    }
+
+    @Override
+    public Page<Board> searchPosts(SearchPostDto searchPostDto, Pageable pageable) {
+        String keyword = searchPostDto.getKeyword();
+        String searchType = searchPostDto.getSearchType();
+        
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return boardRepository.findAll(pageable);
+        }
+        
+        return switch (searchType) {
+            case "title" -> boardRepository.findByTitleContaining(keyword, pageable);
+            case "content" -> boardRepository.findByContentContaining(keyword, pageable);
+            default -> boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+        };
+    }
 }
