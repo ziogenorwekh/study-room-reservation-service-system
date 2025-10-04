@@ -94,7 +94,7 @@ public class BoardController {
 
 
     // 게시글 삭제
-    @DeleteMapping("/board/post/{postId}")
+    @PostMapping("/board/post/{postId}")
     public String deleteBoard(@PathVariable Long postId,
                               @AuthenticationPrincipal UserDetails userDetails) {
         String currentUsername = userDetails.getUsername();
