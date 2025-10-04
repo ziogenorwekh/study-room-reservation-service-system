@@ -63,16 +63,21 @@
 <script th:inline="javascript">
     function toggleLike() {
         const postId = [[${post.postId}]];
-        const csrfToken = /*[[${_csrf.token}]]*/ '';
-        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
-        
+        const csrfToken = /*[[${_csrf != null ? _csrf.token : ''}]]*/ '';
+        const csrfHeader = /*[[${_csrf != null ? _csrf.headerName : ''}]]*/ '';
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        if (csrfHeader && csrfToken) {
+            headers[csrfHeader] = csrfToken;
+        }
+
         fetch(`/board/post/${postId}/like`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                [csrfHeader]: csrfToken
-            }
+            headers: headers
         })
         .then(response => response.text())
         .then(result => {
@@ -97,5 +102,6 @@
             alert('오류가 발생했습니다.');
         });
     }
-</script></body>
+</script>
+</body>
 </html>
