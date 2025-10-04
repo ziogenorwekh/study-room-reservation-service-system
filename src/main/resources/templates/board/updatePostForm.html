@@ -17,7 +17,6 @@
 
     <form th:action="@{|/posts/${postId}/edit|}" th:object="${form}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <!-- 낙관적 락 버전 -->
         <input type="hidden" th:field="*{version}"/>
 
         <div>

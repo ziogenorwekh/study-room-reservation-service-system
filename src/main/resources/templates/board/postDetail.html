@@ -46,7 +46,7 @@
                             <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <button class="btn btn-danger" type="submit">삭제</button>
                         </form>
-                        <!-- 작성자 본인에게만 노출 -->
+                        <!-- 게시글 수정 버튼 (작성자 본인에게만 노출) -->
                         <a th:href="@{/board/post/{id}/edit(id=${post.postId})}"
                            class="btn btn-primary ms-2"
                            th:if="${#authentication.name == post.username}">
