@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +41,15 @@ public class BoardController {
 
     // 게시글 등록 POST
     @PostMapping("/board/create")
-    public String createPost(@ModelAttribute CreatePostDto createPostDto) {
+    public String createPost(@ModelAttribute CreatePostDto createPostDto,
+                             Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        createPostDto.setUsername(authentication.getName());
+
         postService.createPost(createPostDto);
         return "redirect:/board/list";
     }

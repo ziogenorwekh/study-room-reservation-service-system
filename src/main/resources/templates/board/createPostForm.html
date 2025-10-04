@@ -86,7 +86,8 @@
     <input type="text" th:field="*{title}" class="form-input" placeholder="제목" required />
 
     <div class="form-label">작성자</div>
-    <input type="text" th:field="*{username}" class="form-input" placeholder="작성자" required />
+    <input type="text" th:value="${#authentication.principal.username}"
+         readonly class="form-input" />
 
     <div class="form-label">내용</div>
     <textarea th:field="*{content}" rows="7" class="form-input" placeholder="내용" required></textarea>
