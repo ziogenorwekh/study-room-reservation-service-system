@@ -47,11 +47,11 @@
                             <button class="btn btn-danger" type="submit">삭제</button>
                         </form>
                         <!-- 게시글 수정 버튼 (작성자 본인에게만 노출) -->
-                        <a th:href="@{/board/post/{id}/edit(id=${post.postId})}"
-                           class="btn btn-primary ms-2"
-                           th:if="${#authentication.name == post.username}">
-                            수정
-                        </a>
+                            <a class="btn btn-primary ms-2"
+                               th:href="@{/board/post/{id}/edit(id=${post.postId})}"
+                               th:if="${#authentication.name == post.username}">
+                                수정
+                            </a>
                     </div>
                 </div>
             </div>
