@@ -39,12 +39,18 @@ public class Board extends BaseEntity {
 		this.viewCount++;
 	}
 
-    @Version
-    private Long version;   // 동시 수정 방지
+//    @Version
+//    private Long version;   // 동시 수정 방지 (본인만 수정할 수 있으므로 비활성화 처리)
 
     // 작성자 null 허용(탈퇴 사용자)
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "author_id", nullable = true) // nullable 허용
     private User author;
+
+    /** 제목+내용 수정 */
+    public void updateBoard(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
 }

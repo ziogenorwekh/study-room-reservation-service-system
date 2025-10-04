@@ -2,16 +2,19 @@ package com.choongang.studyreservesystem.service.jpa.Impl;
 
 import com.choongang.studyreservesystem.domain.Board;
 import com.choongang.studyreservesystem.dto.CreatePostDto;
+import com.choongang.studyreservesystem.dto.UpdatePostDto;
 import com.choongang.studyreservesystem.exception.BoardDeletionException;
 import com.choongang.studyreservesystem.exception.BoardNotFoundException;
 import com.choongang.studyreservesystem.exception.UnauthorizedDeleteException;
 import com.choongang.studyreservesystem.repository.jpa.BoardRepository;
 import com.choongang.studyreservesystem.service.jpa.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -84,4 +87,36 @@ public class BoardServiceImpl implements BoardService {
         post.increaseViewCount();
         return boardRepository.save(post);
     }
+
+    // 게시글 수정 관련 함수 추가 2025.10.04 JHE
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isAuthor(Long boardId, Long userId) {
+        // author가 null일 수 있으므로 authorId만 가볍게 조회
+        Optional<Long> authorIdOpt = boardRepository.findAuthorIdByBoardId(boardId);
+        if (authorIdOpt.isEmpty()) return false; // 글 없음
+        Long authorId = authorIdOpt.get();
+        if (authorId == null) return false;      // 탈퇴/분리된 글 → 누구도 수정 불가
+        return authorId.equals(userId);
+    }
+
+    @Override
+    @Transactional
+    public void updatePost(Long boardId, Long actorUserId, UpdatePostDto updatePostDto) {
+        Board board = getPostByPostId(boardId);
+
+        // 1) 작성자 존재 검증 (author == null 이면 수정 금지)
+        if (board.getAuthor() == null) {
+            throw new SecurityException("작성자가 분리된 게시글은 수정할 수 없습니다.");
+        }
+
+        // 2) 권한 검증 (작성자 본인만)
+        if (!board.getAuthor().getId().equals(actorUserId)) {
+            throw new SecurityException("작성자 본인만 수정할 수 있습니다.");
+        }
+
+        board.updateBoard(updatePostDto.getTitle(), updatePostDto.getContent());
+
+    }
+
 }

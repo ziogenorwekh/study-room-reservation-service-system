@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UpdatePsotDto {
+public class UpdatePostDto {
 
     @NotBlank
     @Size(max = 150)
