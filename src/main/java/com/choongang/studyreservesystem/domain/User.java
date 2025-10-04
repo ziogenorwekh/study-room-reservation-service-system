@@ -31,6 +31,7 @@ public class User extends BaseEntity {
 
     // 게시글은 그대로 두고 작성자만 NULL 처리(탈퇴 사용자)
     @OneToMany(mappedBy = "author", orphanRemoval = false)
+    @Builder.Default
     private List<Board> boards = new ArrayList<>();
 
 }

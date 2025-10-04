@@ -38,6 +38,10 @@ public class Board extends BaseEntity {
 	public void increaseViewCount() {
 		this.viewCount++;
 	}
+	
+	public void updateLikeCount(Long likeCount) {
+		this.likeCount = likeCount;
+	}
 
 //    @Version
 //    private Long version;   // 동시 수정 방지 (본인만 수정할 수 있으므로 비활성화 처리)

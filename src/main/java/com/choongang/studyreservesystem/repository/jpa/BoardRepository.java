@@ -1,6 +1,8 @@
 package com.choongang.studyreservesystem.repository.jpa;
 
 import com.choongang.studyreservesystem.dto.CreatePostDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.choongang.studyreservesystem.domain.Board;
@@ -14,8 +16,12 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    List<Board> findByUsername(String username);
-    List<Board> findByTitleContaining(String keyword);
+    Page<Board> findByUsername(@Param("username") String username, Pageable pageable);
+    Page<Board> findByTitleContaining(@Param("tileKeyword")String titleKeyword, Pageable pageable);
+    Page<Board> findByContentContaining(@Param("contentKeyword")String contentKeyword, Pageable pageable);
+    Page<Board> findByTitleContainingOrContentContaining(
+            @Param("titleKeyword")String titleKeyword, @Param("contentKeyword")String contentKeyword, Pageable pageable);
+
 
 
     // 작성자 삭제시, 일괄 null 처리 (유저 삭제 전에 호출)
