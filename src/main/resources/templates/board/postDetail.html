@@ -47,6 +47,13 @@
                         <button class="btn btn-danger" onclick="deletePost(board.boardId)"
                                 th:if="${post.username == session.username}">삭제</button>
                     </form>
+                    <!-- 작성자 본인 또는 관리자에게만 노출 -->
+                    <a th:href="@{/board/post/{id}/edit(id=${board.id})}"
+                       class="btn btn-primary"
+                       th:if="${#authentication != null and ( #authentication.name == board.author.username
+                                or #authorization.expression('hasRole(''ADMIN'')'))}">
+                        수정
+                    </a>
                 </div>
             </div>
         </div>

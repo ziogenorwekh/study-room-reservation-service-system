@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>게시글 수정</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<div class="container">
+    <h1>게시글 수정</h1>
+
+    <div th:if="${#fields.hasErrors()}">
+        <p class="error">입력값을 확인해주세요.</p>
+    </div>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${message}" class="message" th:text="${message}"></div>
+
+    <form th:action="@{|/posts/${postId}/edit|}" th:object="${form}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <!-- 낙관적 락 버전 -->
+        <input type="hidden" th:field="*{version}"/>
+
+        <div>
+            <label for="title">제목</label>
+            <input id="title" type="text" th:field="*{title}" maxlength="150" required/>
+            <span class="field-error" th:errors="*{title}"></span>
+        </div>
+
+        <div>
+            <label for="content">내용</label>
+            <textarea id="content" rows="12" th:field="*{content}" required></textarea>
+            <span class="field-error" th:errors="*{content}"></span>
+        </div>
+
+        <div class="actions">
+            <button type="submit">수정하기</button>
+            <a th:href="@{|/posts/${postId}|}">취소</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
